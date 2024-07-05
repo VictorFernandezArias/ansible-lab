@@ -1,7 +1,7 @@
 ---
-- name: Print hellow world
-  hosts: all
+- name: Print hello world
+  hosts: localhost
   tasks:
     - name: hello world
       debug: 
-        msg: 'Hello world compañeres!!!'  
+        msg: 'Hello world!'  
