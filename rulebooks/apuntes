@@ -10,8 +10,12 @@ curl -H 'Content-Type: application/json' \
 
 
 
-curl -k -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": false, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
+curl -vk -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": false, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
+
+curl -vk -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": True, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
 
 
+curl -k -X POST -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": true, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
 
-curl -k -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": true, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
+
+https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/

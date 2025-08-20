@@ -11,8 +11,8 @@
     - name: Run JT - Hello World
       condition:
         all:
-          - event.payload.run is defined
-          - event.payload.run == true
+          - event.payload is defined
+          - event.payload.run == True
       actions:
         - debug:
         - run_job_template:
