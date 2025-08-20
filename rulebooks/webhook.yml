@@ -9,16 +9,6 @@
 
   rules:
     - name: Run JT - Hello World
-      condition:
-        all:
-          - event.payload.run is defined
-          - event.payload.run == true
+      condition: event.payload is defined
       actions:
         - debug:
-        - run_job_template:
-          name: "JT - Hello World"
-          organization: "Default"
-          job_args:
-            extra_vars:
-              source: "eda-webhook"
-              incoming_payload: "{{ event.payload }}"
