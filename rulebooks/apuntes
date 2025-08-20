@@ -1,0 +1,17 @@
+# Dispara (run=true)
+curl -H 'Content-Type: application/json' \
+     -d '{"run": true, "message":"deploy"}' \
+     http://127.0.0.1:5000/endpoint
+
+# No dispara (run=false)
+curl -H 'Content-Type: application/json' \
+     -d '{"run": false, "message":"skip"}' \
+     http://127.0.0.1:5000/endpoint
+
+
+
+curl -k -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": false, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
+
+
+
+curl -k -H 'Content-Type: application/json' -u "redhat:redhat01" -d '{"run": true, "message":"skip"}' https://aap-aap.apps-crc.testing/eda-event-streams/api/eda/v1/external_event_stream/eb50d14b-d2e3-4ab0-a756-35cf1d0664ae/post/
