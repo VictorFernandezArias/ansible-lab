@@ -1,0 +1,10 @@
+- name: Remote sh
+  hosts: all
+  tasks:
+    - name: Ejecutar script sh
+      ansible.builtin.command: sh /home/victor/hola.sh
+      register: resultado
+
+    - name: Mostrar resultado
+      ansible.builtin.debug:
+        msg: "{{ resultado }}"
