@@ -17,7 +17,7 @@
   #   AZURE_SECRET: '{{ env_vars.PASSWORD }}'
   #   AZURE_TENANT: '{{ env_vars.TENANT }}'
   vars:
-    vm_name: tomcat01-vifernan-pro
+    vm_name: tomcat01-vifernan-pro02
     # rsg: "{{ env_vars.RESOURCEGROUP }}"
     vm_size: Standard_D8s_v3 # 8 vcpu, 32 Ram
     vm_disk_size: 64
