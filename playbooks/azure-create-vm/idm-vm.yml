@@ -1,0 +1,96 @@
+#######
+# Ejecucion:
+# ansible-navigator run idm-vm.yml --pae false --mode stdout --eei quay.io/vifernan/ee-azure --vault-password-file=pass
+# Conectarse a vm
+# ssh azure@PUBLIC_IP
+#######
+
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars/playbook_sensitive_data.yml
+    - vars/nsg-vars.yml
+  environment:
+    AZURE_SUBSCRIPTION_ID: '{{ env_vars.SUBSCRIPTION }}'
+    AZURE_CLIENT_ID: '{{ env_vars.CLIENT_ID }}'
+    AZURE_SECRET: '{{ env_vars.PASSWORD }}'
+    AZURE_TENANT: '{{ env_vars.TENANT }}'    
+  vars:
+    vm_name: idm01-vifernan-pro
+    rsg: '{{ env_vars.RESOURCEGROUP }}'
+    vm_size: Standard_D2_v4 # 2 vcpu, 8 GB
+    vm_disk_size: 64
+
+  tasks:
+  # Crear VirtualNetwork 
+  - name: Create Virtual Network
+    azure.azcollection.azure_rm_virtualnetwork:
+      resource_group: '{{ rsg }}'
+      name: 'vnet-azure'
+      address_prefixes:
+        - '10.0.0.0/16'
+
+  - name: Create a subnet
+    azure_rm_subnet:
+      resource_group: '{{ rsg }}'
+      virtual_network_name: 'vnet-azure'
+      name: 'default'
+      address_prefix_cidr: "10.0.1.0/24"
+          
+  # Crear SSH-Private key para las vm a crear
+
+  # Creacion IP
+  - name: Create public IP address
+    azure.azcollection.azure_rm_publicipaddress:
+      resource_group: '{{ rsg }}'
+      allocation_method: Static
+      name: '{{ vm_name }}-ip'
+    register: output_ip_address
+  
+  # Imprimir IP publica   
+  - name: Public IP of VM
+    debug:
+      msg: "The public IP is {{ output_ip_address.state.ip_address }}."
+
+  # Crear NSG que permite SSH    
+  - name: Create Network Security Group that allows PORTS
+    azure.azcollection.azure_rm_securitygroup:
+      resource_group: '{{ rsg }}'
+      name: '{{ vm_name }}-nsg'
+      rules: '{{ nsg_idm }}'
+
+
+  # Crear interfaz de red
+  - name: Create virtual network interface card
+    azure.azcollection.azure_rm_networkinterface:
+      resource_group: '{{ rsg }}'
+      name: '{{ vm_name }}-nic'
+      virtual_network: vnet-azure
+      subnet_name: default
+      security_group: '{{ vm_name }}-nsg'
+      ip_configurations:
+      - name: ipconfig1
+        public_ip_address_name: '{{ vm_name }}-ip'
+        primary: true
+
+  # Crear VM    
+  - name: Create VM
+    azure.azcollection.azure_rm_virtualmachine:
+      resource_group: '{{ rsg }}'
+      name: '{{ vm_name }}'
+      vm_size: '{{ vm_size }}' 
+      admin_username: '{{ vm_admin_username }}'
+      admin_password: '{{ vm_admin_password }}'
+      ssh_password_enabled: true
+      ssh_public_keys:
+        - path: /home/azure/.ssh/authorized_keys
+          key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQClIbuXBkin54prgUya7XIp0RxxwP1cjsvbAn/cj8iMglSow1GZRHM5SYtYjcQVqZGBoPQYcoRewB0ByvRSYzCJABln0+38KfDP04LO5G1+QqMb2d2x6vhrWxiqpy3hCC/srFQOJrMzlhvl3P+hC8ungwsVfvqv9P0fo0dj8edMoWYrHcG33lXpy7jURirXhJIentYiDkuA4i0OPFna9e46pt18u03/5hHIMzLX9J4sQdusUb24SEJUfZ2HgrgOUu/4OY1OZU45i9yKO7v5GahA9np2cA3JT+HeUqNHXvP3k13zAZEGhP3z4OvtlaT3WezcNjtSS244zIazSmRVThbWje5g3Edky1V/11fDCIqUROUOFs1pz1qtKvxA+Qtx6WN5XJjbRzzt/rhvoPdgmPZZ9jWtlZMRKEWShNFjlu4d4siC7z01rI+3y7liNr6Q1O1pFJ5cJ5xs57+74LhDGqqx9MaF6KWrX0w5TYWD8leEzDGi7cV9+XQDKYA+eV+8S0U= victorfernandez@MacBook-Pro-de-Victor.local"
+      network_interfaces: '{{ vm_name }}-nic'
+      image:
+        offer: RHEL
+        publisher: RedHat
+        sku: '9_4' #'87-gen2'
+        version: latest
+      managed_disk_type: StandardSSD_LRS
+      os_disk_size_gb: '{{ vm_disk_size }}'

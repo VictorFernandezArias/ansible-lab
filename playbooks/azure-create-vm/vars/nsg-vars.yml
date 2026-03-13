@@ -1,0 +1,135 @@
+---
+nsg_basic:
+  - name: SSH
+    protocol: Tcp
+    destination_port_range: 22
+    access: Allow
+    priority: 1001
+    direction: Inbound
+  - name: HTTP
+    protocol: Tcp
+    destination_port_range: 80
+    access: Allow
+    priority: 1002
+    direction: Inbound  
+  - name: HTTPS
+    protocol: Tcp
+    destination_port_range: 443
+    access: Allow
+    priority: 1003
+    direction: Inbound  
+  - name: Tomcat
+    protocol: Tcp
+    destination_port_range: 8080
+    access: Allow
+    priority: 1004
+    direction: Inbound      
+nsg_idm:
+  - name: SSH
+    protocol: Tcp
+    destination_port_range: 22
+    access: Allow
+    priority: 1001
+    direction: Inbound
+  - name: HTTP
+    protocol: Tcp
+    destination_port_range: 80
+    access: Allow
+    priority: 1002
+    direction: Inbound  
+  - name: HTTPS
+    protocol: Tcp
+    destination_port_range: 443
+    access: Allow
+    priority: 1003
+    direction: Inbound    
+  - name: LDAP
+    protocol: Tcp
+    destination_port_range: 389
+    access: Allow
+    priority: 1004
+    direction: Inbound  
+  - name: LDAPS
+    protocol: Tcp
+    destination_port_range: 636
+    access: Allow
+    priority: 1005
+    direction: Inbound    
+  - name: Kerberos-01
+    protocol: '*'
+    destination_port_range: 88
+    access: Allow
+    priority: 1006
+    direction: Inbound                              
+  - name: Kerberos-02
+    protocol: '*'
+    destination_port_range: 464
+    access: Allow
+    priority: 1007
+    direction: Inbound   
+  - name: DNS
+    protocol: '*'
+    destination_port_range: 53
+    access: Allow
+    priority: 1008
+    direction: Inbound             
+  - name: NTP
+    protocol: Udp
+    destination_port_range: 123
+    access: Allow
+    priority: 1009
+    direction: Inbound 
+  - name: KADMIND-01
+    protocol: Tcp
+    destination_port_range: 464
+    access: Allow
+    priority: 1010
+    direction: Inbound  
+  - name: KADMIND-02
+    protocol: Tcp
+    destination_port_range: 749
+    access: Allow
+    priority: 1011
+    direction: Inbound  
+  - name: DOGTAG
+    protocol: Tcp
+    destination_port_range: 7389
+    access: Allow
+    priority: 1012
+    direction: Inbound  
+  - name: REPLICA-01
+    protocol: Tcp
+    destination_port_range: 9443
+    access: Allow
+    priority: 1013
+    direction: Inbound    
+  - name: REPLICA-02
+    protocol: Tcp
+    destination_port_range: 9444
+    access: Allow
+    priority: 1014
+    direction: Inbound    
+  - name: REPLICA-03
+    protocol: Tcp
+    destination_port_range: 9445
+    access: Allow
+    priority: 1015
+    direction: Inbound    
+  - name: DOGTAG-TOMCAT-01
+    protocol: Tcp
+    destination_port_range: 8005
+    access: Allow
+    priority: 1016
+    direction: Inbound   
+  - name: DOGTAG-TOMCAT-02
+    protocol: Tcp
+    destination_port_range: 8009
+    access: Allow
+    priority: 1017
+    direction: Inbound   
+  - name: CA-HTTPS
+    protocol: Tcp
+    destination_port_range: 8443
+    access: Allow
+    priority: 1018
+    direction: Inbound        

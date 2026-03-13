@@ -1,0 +1,16 @@
+2025-03-04T02:43:49.085668+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2025-03-04T02:43:49.086492+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: 
+2025-03-04T02:43:49.086639+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Cannot connect to Podman. Please verify your connection to the Linux system using `podman system connection list`, or try `podman machine init` and `podman machine start` to manage a new Linux VM
+Error: unable to connect to Podman socket: failed to connect: dial tcp 127.0.0.1:63068: connect: connection refused
+
+2025-03-04T02:43:49.143192+00:00 ERROR 'ansible_navigator.image_manager.puller._log_message' Execution environment pull failed
+2025-03-04T02:44:38.810130+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2025-03-04T02:44:38.811391+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2025-03-04T02:44:38.811493+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: unable to inspect "quay.io/vifernan/ee-azure:latest": failed to find image quay.io/vifernan/ee-azure:latest: quay.io/vifernan/ee-azure:latest: image not known
+
+2026-01-13T14:31:09.640664+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' Image inspection failed, image assumed to be corrupted or missing
+2026-01-13T14:31:09.642000+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stdout: []
+
+2026-01-13T14:31:09.642061+00:00 WARNING 'ansible_navigator.image_manager.puller._log_message' stderr: Error: unable to inspect "quay.io/vifernan/ee-azure:latest": failed to find image quay.io/vifernan/ee-azure:latest: quay.io/vifernan/ee-azure:latest: image not known
+
