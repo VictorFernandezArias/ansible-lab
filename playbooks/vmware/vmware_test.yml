@@ -1,45 +1,50 @@
 ---
-- name: VMware Reporte detallado de recursos por MoID
+- name: VMware Reporte Virtual Machines
   hosts: localhost
   gather_facts: false
   connection: local
+
   vars:
+    vms_procesar: []
     vmware_hostname: '{{ lookup("env", "VMWARE_HOST") }}'
     vmware_username: '{{ lookup("env", "VMWARE_USER") }}'
     vmware_password: '{{ lookup("env", "VMWARE_PASSWORD") }}'
-    validate_certs: false
 
   tasks:
-    - name: 1. Obtener listado maestro de todas las VMs
+    - name: "TAREA 1: Obtener inventario de Virtual Machines"
       community.vmware.vmware_vm_info:
         hostname: "{{ vmware_hostname }}"
         username: "{{ vmware_username }}"
         password: "{{ vmware_password }}"
-        validate_certs: "{{ validate_certs }}"
+        validate_certs: false
         vm_type: vm
-      register: initial_vm_list
+      register: vmware_vm_info
 
-    - name: 2. Consultar recursos detallados usando MoID de la lista anterior
+    - name: "TAREA 2: Limpiar y filtrar (Solo Nombre y MoID)"
+      set_fact:
+        vms_procesar: "{{ vms_procesar + [ {'name': item.guest_name, 'moid': item.moid} ] }}"
+      loop: "{{ vmware_vm_info.virtual_machines }}"
+      loop_control:
+        label: "Agregando Virtual Machine: {{ item.guest_name }}"
+
+    - name: "TAREA 3: Consultar Recursos Detallados (Usando lista limpia)"
       vmware.vmware.vm_resource_info:
         hostname: "{{ vmware_hostname }}"
         username: "{{ vmware_username }}"
         password: "{{ vmware_password }}"
-        validate_certs: "{{ validate_certs }}"
+        validate_certs: false
         moid: "{{ item.moid }}"
-      loop: "{{ initial_vm_list.virtual_machines }}"
-      register: detailed_resources
+      loop: "{{ vms_procesar }}"
+      register: vmware_vm_resource_info
       loop_control:
-        label: "Procesando detalle de: {{ item.guest_name }} ({{ item.moid }})"
+        label: "Consultando recursos de {{ item.name }}"
 
-    - name: 3. Mostrar resumen de CPU y Memoria recolectado
+    - name: "TAREA 4: Mostrar Resumen Final"
       ansible.builtin.debug:
-        msg: >
-          VM: {{ item.instance.name }}
-          CPUs: {{ item.instance.config.hardware.num_cpu }}
-          RAM: {{ item.instance.config.hardware.memory_mb }} MB
-          Estado: {{ item.instance.summary.runtime.power_state }}
-          Versión Hardware: {{ item.instance.config.version }}
-      loop: "{{ detailed_resources.results }}"
-      when: item.instance is defined
+        msg:
+          - "Nombre: {{ item.item.name }}"
+          - "CPUs: {{ item.instance.config.hardware.num_cpu | default('N/A') }}"
+          - "Memoria: {{ item.instance.config.hardware.memory_mb | default('N/A') }} MB"
+      loop: "{{ vmware_vm_resource_info.results }}"
       loop_control:
-        label: "{{ item.item.guest_name }}"
+        label: "{{ item.item.name }}"
