@@ -42,7 +42,7 @@
     - name: "TAREA 4: Mostrar Resumen Final"
       ansible.builtin.debug:
         msg:
-          - "Nombre: {{ item.vms[0].name }}"
+          - "Nombre Virtual Machine: {{ item.vms[0].name }}"
           - "CPUs: {{ item.vms[0].cpu.processor_count }}"
           - "Memoria: {{ item.vms[0].memory.size_mb }} MB"
           - "Host ESXi: {{ item.vms[0].esxi_host.name }}"
