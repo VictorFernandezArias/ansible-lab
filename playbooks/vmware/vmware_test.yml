@@ -1,0 +1,27 @@
+---
+- name: Consultar información de infraestructura VMware
+  hosts: localhost
+  gather_facts: false
+  connection: local
+  vars:
+    vmware_hostname: '{{ lookup("env", "VMWARE_HOST") }}'
+    vmware_username: '{{ lookup("env", "VMWARE_USER") }}'
+    vmware_password: '{{ lookup("env", "VMWARE_PASSWORD") }}'
+    vmware_validate_certs: false
+
+  tasks:
+    - name: Listar todas las máquinas virtuales con un filtro específico
+      community.vmware.vmware_vm_info:
+        hostname: "{{ vmware_hostname }}"
+        username: "{{ vmware_username }}"
+        password: "{{ vmware_password }}"
+        validate_certs: "{{ vmware_validate_certs }}"
+        vm_type: vm  # Puedes filtrar por 'vm' o 'template'
+      register: vm_info
+
+    - name: Mostrar el nombre y el estado de encendido de las VMs
+      ansible.builtin.debug:
+        msg: "La VM {{ item.guest_name }} está actualmente {{ item.power_state }}"
+      loop: "{{ vm_info.virtual_machines }}"
+      loop_control:
+        label: "{{ item.guest_name }}"
