@@ -1,5 +1,5 @@
 ---
-- name: Consultar información de infraestructura VMware
+- name: VMware Reporte detallado de recursos por MoID
   hosts: localhost
   gather_facts: false
   connection: local
@@ -7,21 +7,38 @@
     vmware_hostname: '{{ lookup("env", "VMWARE_HOST") }}'
     vmware_username: '{{ lookup("env", "VMWARE_USER") }}'
     vmware_password: '{{ lookup("env", "VMWARE_PASSWORD") }}'
-    vmware_validate_certs: false
+    validate_certs: false
 
   tasks:
-    - name: Listar todas las máquinas virtuales con un filtro específico
+    - name: 1. Obtener listado maestro de todas las VMs
       community.vmware.vmware_vm_info:
         hostname: "{{ vmware_hostname }}"
         username: "{{ vmware_username }}"
         password: "{{ vmware_password }}"
-        validate_certs: "{{ vmware_validate_certs }}"
-        vm_type: vm  # Puedes filtrar por 'vm' o 'template'
-      register: vm_info
+        validate_certs: "{{ validate_certs }}"
+        vm_type: vm
+      register: initial_vm_list
 
-    - name: Mostrar el nombre y el estado de encendido de las VMs
-      ansible.builtin.debug:
-        msg: "La VM {{ item.guest_name }} está actualmente {{ item.power_state }}"
-      loop: "{{ vm_info.virtual_machines }}"
+    - name: 2. Consultar recursos detallados usando MoID de la lista anterior
+      vmware.vmware.vm_resource_info:
+        hostname: "{{ vmware_hostname }}"
+        username: "{{ vmware_username }}"
+        password: "{{ vmware_password }}"
+        validate_certs: "{{ validate_certs }}"
+        moid: "{{ item.moid }}"
+      loop: "{{ initial_vm_list.virtual_machines }}"
+      register: detailed_resources
       loop_control:
-        label: "{{ item.guest_name }}"
+        # Esto evita que el log imprima todo el JSON de 'item' y solo muestre el nombre
+        label: "Procesando detalle de: {{ item.guest_name }} ({{ item.moid }})"
+
+    - name: 3. Mostrar resumen de CPU y Memoria recolectado
+      ansible.builtin.debug:
+        msg: >
+          VM: {{ item.vm_resource_info.name }}
+          CPUs: {{ item.vm_resource_info.config.hardware.num_cpu }}
+          RAM: {{ item.vm_resource_info.config.hardware.memory_mb }} MB
+          Estado: {{ item.vm_resource_info.summary.runtime.power_state }}
+      loop: "{{ detailed_resources.results }}"
+      loop_control:
+        label: "{{ item.item.guest_name }}"
