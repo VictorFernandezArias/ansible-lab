@@ -29,16 +29,17 @@
       loop: "{{ initial_vm_list.virtual_machines }}"
       register: detailed_resources
       loop_control:
-        # Esto evita que el log imprima todo el JSON de 'item' y solo muestre el nombre
         label: "Procesando detalle de: {{ item.guest_name }} ({{ item.moid }})"
 
     - name: 3. Mostrar resumen de CPU y Memoria recolectado
       ansible.builtin.debug:
         msg: >
-          VM: {{ item.vm_resource_info.name }}
-          CPUs: {{ item.vm_resource_info.config.hardware.num_cpu }}
-          RAM: {{ item.vm_resource_info.config.hardware.memory_mb }} MB
-          Estado: {{ item.vm_resource_info.summary.runtime.power_state }}
+          VM: {{ item.instance.name }}
+          CPUs: {{ item.instance.config.hardware.num_cpu }}
+          RAM: {{ item.instance.config.hardware.memory_mb }} MB
+          Estado: {{ item.instance.summary.runtime.power_state }}
+          Versión Hardware: {{ item.instance.config.version }}
       loop: "{{ detailed_resources.results }}"
+      when: item.instance is defined
       loop_control:
         label: "{{ item.item.guest_name }}"
