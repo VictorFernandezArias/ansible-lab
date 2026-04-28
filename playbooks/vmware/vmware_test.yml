@@ -48,5 +48,6 @@
           - "Host ESXi: {{ item.vms[0].esxi_host.name }}"
           - "Uso de Memoria (Active): {{ item.vms[0].stats.memory.active_mb }} MB"
       loop: "{{ vmware_vm_resource_info.results }}"
+      when: item.vms is defined and item.vms | length > 0
       loop_control:
         label: "{{ item.item.name }}"
