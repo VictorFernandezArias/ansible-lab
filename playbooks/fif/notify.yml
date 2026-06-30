@@ -1,0 +1,18 @@
+---
+- name: PB - Notificar estado del bus
+  hosts: all
+
+  vars:
+    bus_name: "{{ bus_name | mandatory }}"
+    bus_action: "{{ bus_action | mandatory }}"
+
+  tasks:
+    - name: Notificar detencion del bus
+      ansible.builtin.debug:
+        msg: "Se detuvo el bus {{ bus_name }}"
+      when: bus_action | lower == 'stop'
+
+    - name: Notificar inicio del bus
+      ansible.builtin.debug:
+        msg: "Se inicio el bus {{ bus_name }}"
+      when: bus_action | lower == 'start'

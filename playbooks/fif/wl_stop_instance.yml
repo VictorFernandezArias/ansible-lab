@@ -1,0 +1,11 @@
+---
+- name: PB - Detener instancia de bus
+  hosts: all
+
+  vars:
+    bus_name: "{{ bus_name | mandatory }}"
+
+  tasks:
+    - name: Detener bus
+      ansible.builtin.debug:
+        msg: "Se detuvo el bus {{ bus_name }}"
